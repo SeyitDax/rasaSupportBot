@@ -1,0 +1,20 @@
+version: "3.1"
+
+intents:
+  - greet
+  - ask_hours
+  - ask_refund
+
+responses:
+  utter_greet:
+  - text: "Hi"
+
+  utter_ask_hours:
+  - text: "We're open."
+
+  utter_ask_refund:
+  - text: "We have a refund policy."
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: false

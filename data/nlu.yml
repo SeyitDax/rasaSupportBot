@@ -1,0 +1,23 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hi
+    - hello
+    - hey
+
+- intent: ask_hours
+  examples: |
+    - when are you open?
+    - what are your hours?
+    - opening times?
+    - are you open?
+
+- intent: ask_refund
+  examples: |
+    - how do I get a refund?
+    - refund process?
+    - can I have my money back?
+    - refund policy?
+    - I want a refund.

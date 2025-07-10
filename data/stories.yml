@@ -1,0 +1,153 @@
+version: "3.1"
+
+stories:
+
+- story: greet path
+  steps:
+  - intent: greet
+  - action: utter_greet
+
+- story: hours path
+  steps:
+  - intent: ask_hours
+  - action: utter_ask_hours
+
+- story: refund path
+  steps:
+  - intent: ask_refund
+  - action: utter_ask_refund
+
+- story: repeat hours
+  steps:
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_hours
+  - action: utter_ask_hours
+
+- story: repeat refund
+  steps:
+  - intent: ask_refund
+  - action: utter_ask_refund
+  - intent: ask_refund
+  - action: utter_ask_refund
+  - intent: ask_refund
+  - action: utter_ask_refund
+
+- story: greet then ask hours
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_hours
+  - action: utter_ask_hours
+
+- story: greet then ask refund
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_refund
+  - action: utter_ask_refund
+  - intent: ask_refund
+  - action: utter_ask_refund
+
+- story: hours then refund
+  steps:
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_refund
+  - action: utter_ask_refund
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_refund
+  - action: utter_ask_refund
+
+- story: hours and hours
+  steps:
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_hours
+  - action: utter_ask_hours
+
+- story: refund and refund
+  steps:
+  - intent: ask_refund
+  - action: utter_ask_refund
+  - intent: ask_refund
+
+- story: hours hours and refund
+  steps:
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_refund
+  - action: utter_ask_refund
+
+- story: greet, refund, hours
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_refund
+  - action: utter_ask_refund
+  - intent: ask_hours
+  - action: utter_ask_hours
+
+- story: greet, hours, refund
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_refund
+  - action: utter_ask_refund
+
+- story: ask hours twice
+  steps:
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_hours
+  - action: utter_ask_hours
+
+- story: ask refund twice
+  steps:
+  - intent: ask_refund
+  - action: utter_ask_refund
+  - intent: ask_refund
+  - action: utter_ask_refund
+
+- story: ask hours then refund
+  steps:
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_refund
+  - action: utter_ask_refund
+
+- story: ask refund then hours
+  steps:
+  - intent: ask_refund
+  - action: utter_ask_refund
+  - intent: ask_hours
+  - action: utter_ask_hours
+
+- story: greet then ask hours then refund
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_hours
+  - action: utter_ask_hours
+  - intent: ask_refund
+  - action: utter_ask_refund
+
+- story: greet then ask refund then hours
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_refund
+  - action: utter_ask_refund
+  - intent: ask_hours
+  - action: utter_ask_hours

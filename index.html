@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RasaSupportBot - Broken Demo</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .header {
+            background: #2d3748;
+            color: #fff;
+            padding: 2rem 0 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        .header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 1.2rem;
+            color: #cbd5e1;
+        }
+        .content {
+            max-width: 600px;
+            margin: 2rem auto 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            padding: 2rem;
+            text-align: center;
+        }
+        .content h2 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+        .content ul {
+            text-align: left;
+            margin: 1rem auto;
+            max-width: 400px;
+        }
+        .content li {
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        #webchat {
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>RasaSupportBot</h1>
+        <p>Broken Demo Bot &mdash; For Portfolio Purposes</p>
+    </div>
+    <div class="content">
+        <h2>Welcome!</h2>
+        <p>This is a deliberately broken chatbot for demo purposes. Try asking:</p>
+        <ul>
+            <li><strong>hi</strong></li>
+            <li><strong>when are you open?</strong></li>
+            <li><strong>how do I get a refund?</strong></li>
+        </ul>
+        <p>Other questions may not work (on purpose!).</p>
+    </div>
+    <!-- Botfront Webchat Widget -->
+    <div id="webchat"></div>
+    <script>!(function () {
+        let e = document.createElement("script"),
+          t = document.head || document.getElementsByTagName("head")[0];
+        (e.src =
+          "https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.js"),
+          // Replace 1.x.x with the version that you want
+          (e.async = !0),
+          (e.onload = () => {
+            window.WebChat.default(
+              {
+                initPayload: "/greet",
+                customData: { language: "en" },
+                socketUrl: "http://localhost:5005",
+                params: { storage: "session" },
+                inputTextFieldHint: "Type a message...",
+                title: "Rasa Support Bot",
+                showFullscreenButton: true,
+                showHeader: true,
+                showBotAvatar: true,
+                showUserAvatar: true,
+                showCloseButton: true,
+                // add other props here
+              },
+              null
+            );
+          }),
+          t.insertBefore(e, t.firstChild);
+      })();
+    </script>
+</body>
+</html>
