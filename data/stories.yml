@@ -2,152 +2,92 @@ version: "3.1"
 
 stories:
 
-- story: greet path
+- story: greet and goodbye
   steps:
   - intent: greet
   - action: utter_greet
+  - intent: goodbye
+  - action: utter_goodbye
 
-- story: hours path
+- story: ask hours
   steps:
   - intent: ask_hours
   - action: utter_ask_hours
 
-- story: refund path
+- story: refund via form
   steps:
   - intent: ask_refund
-  - action: utter_ask_refund
+  - action: action_deactivate_loop
+  - action: refund_form
+  - active_loop: refund_form
+  - slot_was_set:
+    - requested_slot: order_number
+  - slot_was_set:
+    - requested_slot: email
+  - slot_was_set:
+    - requested_slot: phone_number
+  - active_loop: null
+  - action: action_submit_refund
 
-- story: repeat hours
+- story: order status via form
   steps:
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_hours
-  - action: utter_ask_hours
+  - intent: ask_order_status
+  - action: action_deactivate_loop
+  - action: order_status_form
+  - active_loop: order_status_form
+  - slot_was_set:
+    - requested_slot: order_number
+  - active_loop: null
+  - action: action_track_order
 
-- story: repeat refund
+- story: product info
   steps:
-  - intent: ask_refund
-  - action: utter_ask_refund
-  - intent: ask_refund
-  - action: utter_ask_refund
-  - intent: ask_refund
-  - action: utter_ask_refund
+  - intent: ask_product_info
+  - action: utter_ask_product_info
 
-- story: greet then ask hours
+- story: complaint via form
   steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_hours
-  - action: utter_ask_hours
+  - intent: complaint
+  - action: action_deactivate_loop
+  - action: complaint_form
+  - active_loop: complaint_form
+  - slot_was_set:
+    - requested_slot: issue_type
+  - slot_was_set:
+    - requested_slot: email
+  - slot_was_set:
+    - requested_slot: phone_number
+  - active_loop: null
+  - action: action_submit_complaint
 
-- story: greet then ask refund
+- story: enhanced fallback
   steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: ask_refund
-  - action: utter_ask_refund
-  - intent: ask_refund
-  - action: utter_ask_refund
+  - intent: fallback
+  - action: action_fallback_with_context
 
-- story: hours then refund
+- story: period calculator via form
   steps:
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_refund
-  - action: utter_ask_refund
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_refund
-  - action: utter_ask_refund
+  - intent: ask_period_calculator
+  - action: action_deactivate_loop
+  - action: period_calculator_form
+  - active_loop: period_calculator_form
+  - slot_was_set:
+    - requested_slot: last_period_date
+  - slot_was_set:
+    - requested_slot: cycle_length
+  - slot_was_set:
+    - requested_slot: phone_number
+  - active_loop: null
+  - action: action_period_calculator
 
-- story: hours and hours
+- story: direct period calculation with date
   steps:
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_hours
-  - action: utter_ask_hours
+  - intent: provide_period_date
+  - action: action_period_calculator
 
-- story: refund and refund
+- story: track order with direct number
   steps:
-  - intent: ask_refund
-  - action: utter_ask_refund
-  - intent: ask_refund
+  - intent: provide_order_number
+  - action: action_track_order
 
-- story: hours hours and refund
-  steps:
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_refund
-  - action: utter_ask_refund
 
-- story: greet, refund, hours
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: ask_refund
-  - action: utter_ask_refund
-  - intent: ask_hours
-  - action: utter_ask_hours
-
-- story: greet, hours, refund
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_refund
-  - action: utter_ask_refund
-
-- story: ask hours twice
-  steps:
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_hours
-  - action: utter_ask_hours
-
-- story: ask refund twice
-  steps:
-  - intent: ask_refund
-  - action: utter_ask_refund
-  - intent: ask_refund
-  - action: utter_ask_refund
-
-- story: ask hours then refund
-  steps:
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_refund
-  - action: utter_ask_refund
-
-- story: ask refund then hours
-  steps:
-  - intent: ask_refund
-  - action: utter_ask_refund
-  - intent: ask_hours
-  - action: utter_ask_hours
-
-- story: greet then ask hours then refund
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: ask_hours
-  - action: utter_ask_hours
-  - intent: ask_refund
-  - action: utter_ask_refund
-
-- story: greet then ask refund then hours
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: ask_refund
-  - action: utter_ask_refund
-  - intent: ask_hours
-  - action: utter_ask_hours

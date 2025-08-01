@@ -1,2 +1,105 @@
 version: "3.1"
 rules:
+
+- rule: Greet
+  steps:
+  - intent: greet
+  - action: utter_greet
+
+- rule: Goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- rule: Thanks
+  steps:
+  - intent: thanks
+  - action: utter_thanks
+
+- rule: Ask hours
+  steps:
+  - intent: ask_hours
+  - action: utter_ask_hours
+
+- rule: Enhanced fallback
+  steps:
+  - intent: fallback
+  - action: action_fallback_with_context
+
+- rule: Refund form
+  steps:
+  - intent: ask_refund
+  - action: action_deactivate_loop
+  - action: refund_form
+  - active_loop: refund_form
+
+- rule: Submit refund form
+  condition:
+  - active_loop: refund_form
+  steps:
+  - action: refund_form
+  - active_loop: null
+  - slot_was_set:
+    - requested_slot: null
+  - action: action_submit_refund
+
+- rule: Order status form
+  steps:
+  - intent: ask_order_status
+  - action: action_deactivate_loop
+  - action: order_status_form
+  - active_loop: order_status_form
+
+- rule: Submit order status form
+  condition:
+  - active_loop: order_status_form
+  steps:
+  - action: order_status_form
+  - active_loop: null
+  - slot_was_set:
+    - requested_slot: null
+  - action: action_track_order
+
+- rule: Complaint form
+  steps:
+  - intent: complaint
+  - action: action_deactivate_loop
+  - action: complaint_form
+  - active_loop: complaint_form
+
+- rule: Submit complaint form
+  condition:
+  - active_loop: complaint_form
+  steps:
+  - action: complaint_form
+  - active_loop: null
+  - slot_was_set:
+    - requested_slot: null
+  - action: action_submit_complaint
+
+- rule: Period Calculator form
+  steps:
+  - intent: ask_period_calculator
+  - action: action_deactivate_loop
+  - action: period_calculator_form
+  - active_loop: period_calculator_form
+
+- rule: Submit period calculator form
+  condition:
+  - active_loop: period_calculator_form
+  steps:
+  - action: period_calculator_form
+  - active_loop: null
+  - slot_was_set:
+    - requested_slot: null
+  - action: action_period_calculator
+
+- rule: Direct period date input
+  steps:
+  - intent: provide_period_date
+  - action: action_period_calculator
+
+- rule: Direct order tracking
+  steps:
+  - intent: provide_order_number
+  - action: action_track_order

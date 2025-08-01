@@ -2,19 +2,223 @@ version: "3.1"
 
 intents:
   - greet
+  - goodbye
+  - thanks
   - ask_hours
   - ask_refund
+  - ask_order_status
+  - ask_product_info
+  - complaint
+  - fallback
+  - provide_order_number
+  - provide_email
+  - ask_period_calculator
+  - provide_period_date
+  - provide_phone_number
+  - provide_cycle_length
+
+entities:
+  - order_number
+  - product_name
+  - issue_type
+  - email
+  - last_period_date
+  - cycle_length
+  - phone_number
+
+slots:
+  order_number:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: order_number
+      - type: from_text
+        conditions:
+        - active_loop: refund_form
+          requested_slot: order_number
+        - active_loop: order_status_form
+          requested_slot: order_number
+  product_name:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: product_name
+  issue_type:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: issue_type
+  email:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: email
+      - type: from_text
+        conditions:
+        - active_loop: refund_form
+          requested_slot: email
+        - active_loop: complaint_form
+          requested_slot: email
+  last_period_date:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: last_period_date
+  cycle_length:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: cycle_length
+      - type: from_text
+        conditions:
+        - active_loop: period_calculator_form
+          requested_slot: cycle_length
+  next_period_date:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+  ovulation_date:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+  phone_number:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: phone_number
+      - type: from_text
+        conditions:
+        - active_loop: refund_form
+          requested_slot: phone_number
+        - active_loop: complaint_form
+          requested_slot: phone_number
+        - active_loop: period_calculator_form
+          requested_slot: phone_number
+
+forms:
+  refund_form:
+    required_slots:
+      - order_number
+      - email
+      - phone_number
+  complaint_form:
+    required_slots:
+      - issue_type
+      - email
+      - phone_number
+  order_status_form:
+    required_slots:
+      - order_number
+  period_calculator_form:
+    required_slots:
+      - last_period_date
+      - cycle_length
+      - phone_number
 
 responses:
   utter_greet:
-  - text: "Hi"
-
+    - text: "Hello! How can I assist you today? Here are some things I can help with:"
+      buttons:
+        - title: "Check Order Status"
+          payload: /ask_order_status
+        - title: "Request a Refund"
+          payload: /ask_refund
+        - title: "File a Complaint"
+          payload: /complaint
+        - title: "Period Calculator"
+          payload: /ask_period_calculator
+  utter_goodbye:
+    - text: "Goodbye! If you need anything else, just ask."
+  utter_thanks:
+    - text: "You're welcome!"
   utter_ask_hours:
-  - text: "We're open."
-
+    - text: "Our support hours are 9am to 6pm, Monday to Friday."
   utter_ask_refund:
-  - text: "We have a refund policy."
+    - text: "To process a refund, I'll need your order number and email."
+  utter_ask_order_status:
+    - text: "Please provide your order number to check the status."
+  utter_ask_product_info:
+    - text: "Which product would you like information about?"
+  utter_ask_complaint:
+    - text: "Please describe your issue."
+  utter_fallback:
+    - text: "I'm sorry, I didn't understand that. Can you rephrase?"
+  utter_ask_order_number:
+    - text: "Could you provide your order number?"
+  utter_ask_email:
+    - text: "May I have your email address?"
+  utter_ask_issue_type:
+    - text: "What type of issue are you experiencing? (e.g., delivery, product, payment)"
+  utter_ask_product_name:
+    - text: "What is the name of the product?"
+  utter_submit_refund:
+    - text: "Thank you. Your refund request has been submitted."
+  utter_submit_complaint:
+    - text: "Thank you for your feedback. We will address your complaint promptly."
+  utter_submit_order_status:
+    - text: "Here is the status of your order: [simulated status]."
+  utter_confirm_email:
+    - text: "Thanks, I received your email: {email}."
+  utter_confirm_order_number:
+    - text: "Got it, your order number is {order_number}."
+  utter_confirm_issue_type:
+    - text: "Thank you, the issue type is {issue_type}."
+  utter_ask_name:
+    - text: "Can I get your name?"
+  utter_confirm_get_name:
+    - text: "Thanks, {name}!"
+  utter_ask_phone:
+    - text: "Can you give me your phone number?"
+  utter_ask_phone_number:
+    - text: "To send you SMS notifications, I'll need your phone number (with country code, e.g., +1234567890)."
+  utter_confirm_get_phone:
+    - text: "Great your phone number is {phone}"
+  utter_confirm_phone_number:
+    - text: "Thanks! I'll send SMS notifications to {phone_number}."
+  utter_ask_message:
+    - text: "What message would you like to send to us?"
+  utter_confirm_get_message:
+    - text: "We are sending your message: {message}"
+  utter_ask_period_calculator:
+    - text: "I can help you calculate your menstrual cycle. When was your last period?"
+  utter_ask_last_period_date:
+    - text: "When was the first day of your last period? Please provide the date in YYYY-MM-DD format."
+  utter_ask_cycle_length:
+    - text: "How long is your typical cycle? Please provide the number of days (average is 28 days)."
+  utter_confirm_last_period_date:
+    - text: "Thanks, your last period was on {last_period_date}."
+  utter_confirm_cycle_length:
+    - text: "Got it, your cycle length is {cycle_length} days."
+  utter_sms_setup_success:
+    - text: "✅ Perfect! SMS reminders have been set up for your period cycle. You'll receive notifications 2 days before, on the day, and the day after your expected period."
 
+actions:
+  - action_greet_user
+  - validate_refund_form
+  - validate_complaint_form
+  - validate_order_status_form
+  - validate_period_calculator_form
+  - validate_phone_number
+  - action_submit_refund
+  - action_submit_complaint
+  - action_track_order
+  - action_period_calculator
+  - action_fallback_with_context
+  - action_contextual_followup
+  - action_smart_greeting
+  - action_smart_product_info
+  # Removed: refund_form, complaint_form, order_status_form
+  # These are handled automatically by Rasa when defined in the forms section
+  
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: false

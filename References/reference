@@ -1,0 +1,18 @@
+Bot loaded. Type a message and press enter (use '/stop' to exit):
+Your input ->  Hello there
+C:\Users\Acer\Projects\RasaSupportBot\rasaEnv\lib\site-packages\rasa\shared\utils\io.py:100: UserWarning: The RegexEntityExtractor has not been trained properly yet. Continuing without extracting entities via this extractor.
+? Hello! How can I assist you today? Here are some things I can help with: 4: Period Calculator (/ask_period_calculator)
+When was the first day of your last period? Please provide the date in YYYY-MM-DD format.
+Your input ->  2025-07-12
+Thanks, your last period was on 2025-07-12.
+How long is your typical cycle? Please provide the number of days (average is 28 days).
+Your input ->  26
+❌ Unable to track your order. Please check the order number or try again later.
+How long is your typical cycle? Please provide the number of days (average is 28 days).
+Your input ->  26 days
+Please provide a valid number of days (e.g., 28).
+How long is your typical cycle? Please provide the number of days (average is 28 days).
+Your input ->  26 Days since my last cycle
+Please provide a valid number of days (e.g., 28).
+How long is your typical cycle? Please provide the number of days (average is 28 days).
+Your input ->  

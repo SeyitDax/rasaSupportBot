@@ -6,6 +6,59 @@ nlu:
     - hi
     - hello
     - hey
+    - good morning
+    - good afternoon
+    - good evening
+    - greetings
+    - hey there
+    - hi there
+    - hello there
+    - howdy
+    - yo
+    - hi bot
+    - hey assistant
+    - hi, how are you?
+    - hello, anyone there?
+    - good day
+    - what's up
+    - hi, can you help me?
+
+- intent: goodbye
+  examples: |
+    - bye
+    - goodbye
+    - see you later
+    - talk to you soon
+    - have a nice day
+    - see ya
+    - see you
+    - later
+    - catch you later
+    - I'm leaving
+    - talk later
+    - bye bye
+    - see you next time
+    - I'm off
+    - that's all for now
+    - thanks, bye
+
+- intent: thanks
+  examples: |
+    - thanks
+    - thank you
+    - much appreciated
+    - thanks a lot
+    - thank you so much
+    - appreciate it
+    - thanks for your help
+    - that's helpful
+    - cheers
+    - I appreciate your help
+    - thank you for assisting me
+    - thanks for the info
+    - thank you very much
+    - many thanks
+    - thanks for your support
 
 - intent: ask_hours
   examples: |
@@ -13,6 +66,17 @@ nlu:
     - what are your hours?
     - opening times?
     - are you open?
+    - what time do you close?
+    - support hours?
+    - when do you open?
+    - what are your opening hours?
+    - when does your support start?
+    - when does your support end?
+    - what are your business hours?
+    - can I contact you at night?
+    - are you available on weekends?
+    - do you work on holidays?
+    - when can I reach support?
 
 - intent: ask_refund
   examples: |
@@ -21,3 +85,271 @@ nlu:
     - can I have my money back?
     - refund policy?
     - I want a refund.
+    - I need to return my order
+    - I want to request a refund for order 12345
+    - My order [12345](order_number) needs a refund
+    - Refund for order [98765](order_number)
+    - I want to get a refund for my purchase
+    - How can I return my product?
+    - I want to cancel and get a refund
+    - Can you help me with a refund?
+    - I need to get my money back
+    - I want to refund my last order
+    - I want to return something and get a refund
+    - How do I start a refund?
+    - I want to claim a refund
+    - I want to get a refund for order [55555](order_number)
+    - Please refund my order [88888](order_number)
+
+- intent: ask_order_status
+  examples: |
+    - what is the status of my order?
+    - track my order
+    - where is my order?
+    - order status for [12345](order_number)
+    - can you check order [54321](order_number)?
+    - is my order shipped?
+    - has my order [98765](order_number) been delivered?
+    - can you track my order?
+    - I want to check my order
+    - check my delivery
+    - is my order on the way?
+    - has my order arrived?
+    - where's my package?
+    - can you tell me if my order is out for delivery?
+    - I want to know the status of my order
+    - can you update me on my order?
+    - I want to track my delivery
+    - is my package coming today?
+    - can you tell me about my shipment?
+    - I want to check orders
+    - I want to check my delivery
+    - can you check the status of order [22222](order_number)?
+    - please check order [33333](order_number)
+
+- intent: ask_product_info
+  examples: |
+    - tell me about [WidgetX](product_name)
+    - what are the features of [GadgetPro](product_name)?
+    - info about [SuperPhone](product_name)
+    - can you give me details on [UltraTV](product_name)?
+    - I want to know more about [Headphones](product_name)
+    - what does [WidgetX](product_name) do?
+    - can you explain [GadgetPro](product_name)?
+    - give me information about [SuperPhone](product_name)
+    - what is [UltraTV](product_name)?
+    - tell me more about [Headphones](product_name)
+    - what are the specs of [WidgetX](product_name)?
+    - what makes [GadgetPro](product_name) special?
+    - can you tell me about [SuperPhone](product_name)?
+    - I want to learn about [UltraTV](product_name)
+    - what can you tell me about [Headphones](product_name)?
+    - give me details about [WidgetX](product_name)
+    - what is the price of [GadgetPro](product_name)?
+    - is [SuperPhone](product_name) available?
+    - do you have [UltraTV](product_name) in stock?
+    - can I buy [Headphones](product_name)?
+
+- intent: complaint
+  examples: |
+    - I have a complaint
+    - I want to report an issue
+    - I am not happy with my purchase
+    - my product is broken
+    - I received the wrong item
+    - I want to complain about delivery
+    - [delivery](issue_type) was late
+    - [payment](issue_type) issue
+    - [product](issue_type) is defective
+    - I want to file a complaint
+    - I am dissatisfied with my order
+    - my order arrived damaged
+    - I want to complain about the service
+    - I want to report a problem
+    - I want to make a complaint
+    - I want to complain about payment
+    - I want to complain about the product
+    - I want to complain about the delivery
+    - I want to complain about the packaging
+    - I want to complain about the support
+    - I want to complain about the website
+    - I want to complain about the app
+    - I want to complain about the staff
+    - I want to complain about the process
+    - I want to complain about the refund
+    - I want to complain about the return
+    - I want to complain about the exchange
+    - I want to complain about the delay
+    - I want to complain about the cancellation
+    - I want to complain about the communication
+    - I want to complain about the experience
+
+- intent: fallback
+  examples: |
+    - asdfghjkl
+    - qwertyuiop
+    - I don't know what to say
+    - random text
+    - nonsense
+    - blah blah
+    - what?
+    - huh?
+    - I have no idea
+    - gibberish
+    - I don't understand
+    - can you repeat?
+    - what did you say?
+    - say that again
+    - sorry, I didn't get that
+    - can you explain?
+    - what do you mean?
+    - I don't follow
+    - can you clarify?
+    - I'm confused
+    - what are you talking about?
+
+
+- intent: provide_order_number
+  examples: |
+    - my order number is [123456](order_number)
+    - [987654](order_number)
+    - my order is [654321](order_number)
+    - it's [789123](order_number)
+    - [8795456](order_number)
+    - [485658485](order_number)
+    - order number: [5985485](order_number)
+    - here is my order number: [123123](order_number)
+    - [654321](order_number) is my order
+    - [111222](order_number)
+    - [333444](order_number)
+    - [555666](order_number)
+    - [777888](order_number)
+    - [999000](order_number)
+    - [112233](order_number)
+    - [445566](order_number)
+    - [778899](order_number)
+    - [990011](order_number)
+    - my order id is [7654321](order_number)
+    - the number is [87654321](order_number)
+    - I think it was [2345678](order_number)
+    - check [9081726](order_number)
+    - it's probably [1029384](order_number)
+    - order ref: [3948573](order_number)
+    - track [9283746](order_number)
+    - here it is: [8493021](order_number)
+    - [5639204](order_number) is what I got
+    - [7362910](order_number) was sent to me
+    - please find [6150932](order_number)
+
+- intent: provide_phone_number
+  examples: |
+    - my phone number is [+905111264537](phone_number)
+    - it's [+441234567890](phone_number)
+    - you can reach me at [+4917612345678](phone_number)
+    - call me on [+33612345678](phone_number)
+    - phone number: [+390612345678](phone_number)
+    - here's my number: [+12025550123](phone_number)
+    - [+905551112233](phone_number)
+    - my number is [+821012345678](phone_number)
+    - [+61412345678](phone_number)
+    - contact me at [+972501234567](phone_number)
+    - you can contact me via [+905321112233](phone_number)
+    - please call me on [+5511987654321](phone_number)
+    - [+918888777766](phone_number) is my phone number
+    - it's [+12223334444](phone_number)
+    - I can be reached at [+966512345678](phone_number)
+    - [+447911123456](phone_number)
+    - my number is [+351912345678](phone_number)
+    - phone: [+81312345678](phone_number)
+    - I'm at [+380501234567](phone_number)
+
+- intent: ask_period_calculator
+  examples: |
+    - calculate my period cycle
+    - when is my next period?
+    - period calculator
+    - track my menstrual cycle
+    - period cycle prediction
+    - when will I get my period?
+    - help me track my cycle
+    - menstrual cycle calculator
+    - period tracking
+    - cycle prediction
+    - ovulation calculator
+    - fertile window calculator
+    - when do I ovulate?
+    - my period tracker
+    - cycle length calculator
+
+- intent: provide_period_date
+  examples: |
+    - my last period was [2024-01-15](last_period_date)
+    - last period: [2024-02-10](last_period_date)
+    - it was [2024-03-05](last_period_date)
+    - [2024-04-20](last_period_date)
+    - my period started on [2024-05-12](last_period_date)
+    - [2024-06-08](last_period_date) was my last period
+    - the date was [2024-07-03](last_period_date)
+    - I had my period on [2024-07-15](last_period_date)
+    - my period began [2024-08-01](last_period_date)
+    - I started bleeding on [2024-08-05](last_period_date)
+    - it started on [2024-08-10](last_period_date)
+    - the last one was [2024-08-15](last_period_date)
+    - started my last cycle on [2024-08-20](last_period_date)
+    - my last menstrual cycle began on [2024-08-22](last_period_date)
+    - last menstruation date: [2024-08-25](last_period_date)
+    - the last time was [2024-08-28](last_period_date)
+    - I think it was [2024-08-30](last_period_date)
+    - maybe it was [2024-09-01](last_period_date)
+    - my last one started [2024-09-03](last_period_date)
+    - it happened on [2024-09-05](last_period_date)
+
+- intent: provide_cycle_length
+  examples: |
+    - my average cycle is [28 days](cycle_length)
+    - it's usually [30 days](cycle_length)
+    - average length: [27 days](cycle_length)
+    - I usually have a [26-day](cycle_length) cycle
+    - my periods come every [29 days](cycle_length)
+    - it's typically [25 days](cycle_length) long
+    - the average is [31 days](cycle_length)
+    - I usually get my period every [28 days](cycle_length)
+    - my cycle lasts [24 days](cycle_length)
+    - [32 days](cycle_length) is my average
+    - the usual duration is [26 days](cycle_length)
+    - generally it's [30 days](cycle_length)
+    - my normal cycle is [27 days](cycle_length)
+    - [28 days](cycle_length) is the typical length
+    - on average it's about [29 days](cycle_length)
+    - I think it's [25 days](cycle_length)
+    - the average period cycle is [26 days](cycle_length)
+    - I usually have a cycle of [28 days](cycle_length)
+    - it's around [30 days](cycle_length) for me
+    - it's mostly [27 days](cycle_length)
+
+- intent: provide_email
+  examples: |
+    - [ahmetsaddemir@gmail.com](email)
+    - my email is [user@domain.com](email)
+    - [test@example.org](email)
+    - contact me at [john@company.co.uk](email)
+    - you can reach me at [support@website.net](email)
+    - [customer.service@business.com](email)
+    - my email address is [info@mysite.org](email)
+    - [hello@startup.io](email)
+    - please email me at [name@university.edu](email)
+    - [feedback@store.com](email)
+
+
+
+regex:
+  - name: email
+    pattern: '\b[\w.%+-]+@(?:[\w-]+\.)+[a-zA-Z]{2,}\b'
+  - name: order_number
+    pattern: '(?<!\+)\b[0-9]{5,10}\b(?![0-9])'
+  - name: last_period_date
+    pattern: '\d{4}-\d{2}-\d{2}'
+  - name: cycle_length
+    pattern: '[0-9]{1,2}'
+  - name: phone_number
+    pattern: '\+[0-9]{10,15}'
