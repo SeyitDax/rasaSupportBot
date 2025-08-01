@@ -327,18 +327,6 @@ nlu:
     - it's around [30 days](cycle_length) for me
     - it's mostly [27 days](cycle_length)
 
-- intent: provide_email
-  examples: |
-    - [ahmetsaddemir@gmail.com](email)
-    - my email is [user@domain.com](email)
-    - [test@example.org](email)
-    - contact me at [john@company.co.uk](email)
-    - you can reach me at [support@website.net](email)
-    - [customer.service@business.com](email)
-    - my email address is [info@mysite.org](email)
-    - [hello@startup.io](email)
-    - please email me at [name@university.edu](email)
-    - [feedback@store.com](email)
 
 
 

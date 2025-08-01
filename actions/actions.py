@@ -4,6 +4,7 @@
 # See this guide on how to implement these action:
 # https://rasa.com/docs/rasa/custom-actions
 
+from readline import set_completer
 import requests
 import time
 import json
@@ -33,6 +34,112 @@ WEBHOOK_CONFIG = {
     'sms_reminder_base_url': os.getenv('SMS_REMINDER_BASE_URL', 'https://web-production-b03f5.up.railway.app')  # Your SMS Reminder API
 }
 
+# SMS message templates
+SMS_TEMPLATES = {
+    'refund': "✅ Refund request for order {order_number} has been submitted. You'll receive email confirmation within 2-3 business days.",
+    'complaint': "🔔 Your complaint about {issue_type} has been submitted. We'll review it and contact you within 24 hours.",
+    'order_tracking': "📦 Order {order_number} status update: {status}. Track your delivery for more details."
+}
+
+def send_sms_notification(phone_number: str, notification_type: str, **kwargs):
+    """
+    Unified SMS notification function using the SMS reminder API
+    
+    Args:
+        phone_number (str): Recipient's phone number
+        notification_type (str): Type of notification (refund, complaint, order_tracking)
+        **kwargs: Additional parameters for message formatting
+    """
+    if not phone_number:
+        logger.warning("No phone number provided for SMS notification")
+        return False
+        
+    try:
+        # Get message template
+        message_template = SMS_TEMPLATES.get(notification_type, "Notification from support bot.")
+        message = message_template.format(**kwargs)
+        
+        sms_data = {
+            "to": phone_number,
+            "message": message,
+            "created_at": (datetime.now() + timedelta(seconds=20)).isoformat()
+        }
+        
+        response = requests.post(
+            f"{WEBHOOK_CONFIG['sms_reminder_base_url']}/api/reminders",
+            json=sms_data,
+            timeout=5
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            logger.info(f"SMS notification sent successfully for {notification_type} to {phone_number}, reminder_id: {result.get('reminder_id')}")
+            return True
+        else:
+            logger.warning(f"SMS notification failed with status {response.status_code}")
+            return False
+            
+    except Exception as e:
+        logger.error(f"SMS notification failed: {e}")
+        return False
+
+# Common validation functions to reduce duplication
+def validate_email_field(slot_value: Any, dispatcher: CollectingDispatcher) -> Dict[Text, Any]:
+    """Common email validation logic"""
+    import re
+    
+    if slot_value:
+        email_str = str(slot_value).strip()
+        email_pattern = r'\b[\w.%+-]+@(?:[\w-]+\.)+[a-zA-Z]{2,}\b'
+        if re.match(email_pattern, email_str):
+            dispatcher.utter_message(response="utter_confirm_email", email=email_str)
+            return {"email": email_str}
+        else:
+            dispatcher.utter_message(text="Please provide a valid email address (e.g., user@domain.com).")
+            return {"email": None}
+    else:
+        dispatcher.utter_message(response="utter_ask_email")
+        return {"email": None}
+
+def validate_phone_number_field(slot_value: Any, dispatcher: CollectingDispatcher) -> Dict[Text, Any]:
+    """Common phone number validation logic"""
+    import re
+    
+    if slot_value:
+        phone = str(slot_value).strip()
+        if re.match(r'^\+[1-9]\d{9,14}$', phone):
+            dispatcher.utter_message(response="utter_confirm_phone_number", phone_number=phone)
+            return {"phone_number": phone}
+        else:
+            dispatcher.utter_message(text="Please provide a valid phone number with country code (e.g., +1234567890).")
+            return {"phone_number": None}
+    else:
+        dispatcher.utter_message(response="utter_ask_phone_number")
+        return {"phone_number": None}
+
+def validate_order_number_field(slot_value: Any, dispatcher: CollectingDispatcher) -> Dict[Text, Any]:
+    """Common order number validation logic"""
+    import re
+    
+    if slot_value:
+        order_str = str(slot_value).strip()
+        
+        # Check if it looks like a phone number (starts with + or is very long)
+        if order_str.startswith('+') or len(order_str) > 10:
+            dispatcher.utter_message(text="That looks like a phone number. Please provide your order number (5-10 digits, numbers only).")
+            return {"order_number": None}
+        
+        # Validate order number: only digits, 5-10 characters (reasonable range)
+        if re.match(r'^\d{5,10}$', order_str):
+            dispatcher.utter_message(response="utter_confirm_order_number", order_number=order_str)
+            return {"order_number": order_str}
+        else:
+            dispatcher.utter_message(text="Please provide a valid order number (5-10 digits, numbers only).")
+            return {"order_number": None}
+    else:
+        dispatcher.utter_message(response="utter_ask_order_number")
+        return {"order_number": None}
+
 # Turkish delivery tracking APIs
 DELIVERY_APIS = {
     'PTT': 'https://gonderitakip.ptt.gov.tr/api/track',
@@ -59,62 +166,17 @@ class ValidateRefundForm(FormValidationAction):
     def validate_order_number(
         self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict
     ) -> Dict[Text, Any]:
-        import re
-        
-        if slot_value:
-            order_str = str(slot_value).strip()
-            
-            # Check if it looks like a phone number (starts with + or is very long)
-            if order_str.startswith('+') or len(order_str) > 10:
-                dispatcher.utter_message(text="That looks like a phone number. Please provide your order number (5-10 digits, numbers only).")
-                return {"order_number": None}
-            
-            # Validate order number: only digits, 5-10 characters (reasonable range)
-            if re.match(r'^\d{5,10}$', order_str):
-                dispatcher.utter_message(response="utter_confirm_order_number", order_number=order_str)
-                return {"order_number": order_str}
-            else:
-                dispatcher.utter_message(text="Please provide a valid order number (5-10 digits, numbers only).")
-                return {"order_number": None}
-        else:
-            dispatcher.utter_message(response="utter_ask_order_number")
-            return {"order_number": None}
+        return validate_order_number_field(slot_value, dispatcher)
 
     def validate_email(
         self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict
     ) -> Dict[Text, Any]:
-        import re
-        
-        if slot_value:
-            email_str = str(slot_value).strip()
-            # More robust email validation
-            email_pattern = r'\b[\w.%+-]+@(?:[\w-]+\.)+[a-zA-Z]{2,}\b'
-            if re.match(email_pattern, email_str):
-                dispatcher.utter_message(response="utter_confirm_email", email=email_str)
-                return {"email": email_str}
-            else:
-                dispatcher.utter_message(text="Please provide a valid email address (e.g., user@domain.com).")
-                return {"email": None}
-        else:
-            dispatcher.utter_message(response="utter_ask_email")
-            return {"email": None}
+        return validate_email_field(slot_value, dispatcher)
 
     def validate_phone_number(
         self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict
     ) -> Dict[Text, Any]:
-        import re
-        
-        if slot_value:
-            phone = str(slot_value).strip()
-            if re.match(r'^\+[1-9]\d{9,14}$', phone):
-                dispatcher.utter_message(response="utter_confirm_phone_number", phone_number=phone)
-                return {"phone_number": phone}
-            else:
-                dispatcher.utter_message(text="Please provide a valid phone number with country code (e.g., +1234567890).")
-                return {"phone_number": None}
-        else:
-            dispatcher.utter_message(response="utter_ask_phone_number")
-            return {"phone_number": None}
+        return validate_phone_number_field(slot_value, dispatcher)
 
 class ValidateComplaintForm(FormValidationAction):
     def name(self) -> Text:
@@ -133,38 +195,12 @@ class ValidateComplaintForm(FormValidationAction):
     def validate_email(
         self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict
     ) -> Dict[Text, Any]:
-        import re
-        
-        if slot_value:
-            email_str = str(slot_value).strip()
-            # More robust email validation
-            email_pattern = r'\b[\w.%+-]+@(?:[\w-]+\.)+[a-zA-Z]{2,}\b'
-            if re.match(email_pattern, email_str):
-                dispatcher.utter_message(response="utter_confirm_email", email=email_str)
-                return {"email": email_str}
-            else:
-                dispatcher.utter_message(text="Please provide a valid email address (e.g., user@domain.com).")
-                return {"email": None}
-        else:
-            dispatcher.utter_message(response="utter_ask_email")
-            return {"email": None}
+        return validate_email_field(slot_value, dispatcher)
     
     def validate_phone_number(
         self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict
     ) -> Dict[Text, Any]:
-        import re
-        
-        if slot_value:
-            phone = str(slot_value).strip()
-            if re.match(r'^\+[1-9]\d{9,14}$', phone):
-                dispatcher.utter_message(response="utter_confirm_phone_number", phone_number=phone)
-                return {"phone_number": phone}
-            else:
-                dispatcher.utter_message(text="Please provide a valid phone number with country code (e.g., +9055145987858).")
-                return {"phone_number": None}
-        else:
-            dispatcher.utter_message(response="utter_ask_phone_number")
-            return {"phone_number": None}
+        return validate_phone_number_field(slot_value, dispatcher)
 
 class ValidateOrderStatusForm(FormValidationAction):
     def name(self) -> Text:
@@ -173,26 +209,7 @@ class ValidateOrderStatusForm(FormValidationAction):
     def validate_order_number(
         self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict
     ) -> Dict[Text, Any]:
-        import re
-        
-        if slot_value:
-            order_str = str(slot_value).strip()
-            
-            # Check if it looks like a phone number (starts with + or is very long)
-            if order_str.startswith('+') or len(order_str) > 10:
-                dispatcher.utter_message(text="That looks like a phone number. Please provide your order number (5-10 digits, numbers only).")
-                return {"order_number": None}
-            
-            # Validate order number: only digits, 5-10 characters (reasonable range)
-            if re.match(r'^\d{5,10}$', order_str):
-                dispatcher.utter_message(response="utter_confirm_order_number", order_number=order_str)
-                return {"order_number": order_str}
-            else:
-                dispatcher.utter_message(text="Please provide a valid order number (5-10 digits, numbers only).")
-                return {"order_number": None}
-        else:
-            dispatcher.utter_message(response="utter_ask_order_number")
-            return {"order_number": None}
+        return validate_order_number_field(slot_value, dispatcher)
 
 # Enhanced action classes with webhook integration
 class ActionSubmitRefund(Action):
@@ -202,12 +219,14 @@ class ActionSubmitRefund(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         order_number = tracker.get_slot("order_number")
         email = tracker.get_slot("email")
+        phone_number = tracker.get_slot("phone_number")
         
         # Prepare webhook data
         webhook_data = {
             "type": "refund_request",
             "order_number": order_number,
             "email": email,
+            "phone_number": phone_number,
             "timestamp": datetime.now().isoformat(),
             "user_id": tracker.sender_id
         }
@@ -225,8 +244,9 @@ class ActionSubmitRefund(Action):
                 dispatcher.utter_message(text="✅ Your refund request has been submitted successfully. You'll receive an email confirmation shortly.")
                 logger.info(f"Refund webhook successful for order {order_number}")
                 
-                # Trigger SMS notification to your existing SMS API
-                self._send_sms_notification(email, "refund", order_number)
+                # Trigger SMS notification if phone number is provided
+                if phone_number:
+                    send_sms_notification(phone_number, "refund", order_number=order_number)
                 
             else:
                 dispatcher.utter_message(text="⚠️ There was an issue processing your refund request. Please try again or contact support.")
@@ -236,26 +256,7 @@ class ActionSubmitRefund(Action):
             dispatcher.utter_message(text="⚠️ Connection error. Please try again later or contact support directly.")
             logger.error(f"Webhook request failed: {e}")
         
-        return [SlotSet("order_number", None), SlotSet("email", None)]
-    
-    def _send_sms_notification(self, email: str, notification_type: str, order_number: str):
-        """Send SMS notification using your existing SMS reminder API"""
-        try:
-            sms_data = {
-                "recipient": email,  # Assuming your SMS API can handle email lookup
-                "type": notification_type,
-                "order_number": order_number,
-                "message": f"Refund request for order {order_number} has been submitted."
-            }
-            
-            requests.post(
-                f"{WEBHOOK_CONFIG['sms_reminder_base_url']}/send-notification",
-                json=sms_data,
-                timeout=5
-            )
-            logger.info(f"SMS notification sent for {notification_type}")
-        except Exception as e:
-            logger.error(f"SMS notification failed: {e}")
+        return [SlotSet("order_number", None), SlotSet("email", None), SlotSet("phone_number", None)]
 
 class ActionSubmitComplaint(Action):
     def name(self) -> Text:
@@ -264,12 +265,14 @@ class ActionSubmitComplaint(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         issue_type = tracker.get_slot("issue_type")
         email = tracker.get_slot("email")
+        phone_number = tracker.get_slot("phone_number")
         
         # Prepare webhook data
         webhook_data = {
             "type": "complaint",
             "issue_type": issue_type,
             "email": email,
+            "phone_number": phone_number,
             "timestamp": datetime.now().isoformat(),
             "user_id": tracker.sender_id,
             "conversation_history": [event.get('text', '') for event in tracker.events if event.get('event') == 'user']
@@ -288,8 +291,9 @@ class ActionSubmitComplaint(Action):
                 dispatcher.utter_message(text="✅ Your complaint has been submitted. We will review it and contact you within 24 hours.")
                 logger.info(f"Complaint webhook successful for {issue_type}")
                 
-                # Send SMS notification
-                self._send_sms_notification(email, "complaint", issue_type)
+                # Send SMS notification if phone number is provided
+                if phone_number:
+                    send_sms_notification(phone_number, "complaint", issue_type=issue_type)
                 
             else:
                 dispatcher.utter_message(text="⚠️ There was an issue submitting your complaint. Please try again.")
@@ -299,26 +303,7 @@ class ActionSubmitComplaint(Action):
             dispatcher.utter_message(text="⚠️ Connection error. Please try again later.")
             logger.error(f"Webhook request failed: {e}")
         
-        return [SlotSet("issue_type", None), SlotSet("email", None)]
-    
-    def _send_sms_notification(self, email: str, notification_type: str, issue_type: str):
-        """Send SMS notification using your existing SMS reminder API"""
-        try:
-            sms_data = {
-                "recipient": email,
-                "type": notification_type,
-                "issue_type": issue_type,
-                "message": f"Your complaint about {issue_type} has been submitted and will be reviewed soon."
-            }
-            
-            requests.post(
-                f"{WEBHOOK_CONFIG['sms_reminder_base_url']}/send-notification",
-                json=sms_data,
-                timeout=5
-            )
-            logger.info(f"SMS notification sent for {notification_type}")
-        except Exception as e:
-            logger.error(f"SMS notification failed: {e}")
+        return [SlotSet("issue_type", None), SlotSet("email", None), SlotSet("phone_number", None)]
 
 class ActionTrackOrder(Action):
     def name(self) -> Text:
@@ -406,6 +391,7 @@ class ActionPeriodCalculator(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         last_period_date = tracker.get_slot("last_period_date")
         cycle_length = tracker.get_slot("cycle_length") or 28  # Default 28 days
+        phone_number = tracker.get_slot("phone_number")
         
         if not last_period_date:
             dispatcher.utter_message(text="When was your last period? Please provide the date (YYYY-MM-DD format).")
@@ -430,16 +416,22 @@ class ActionPeriodCalculator(Action):
             response_text += f"Next Period: {next_period.strftime('%B %d, %Y')} ({(next_period - datetime.now()).days} days)\n"
             response_text += f"Ovulation: {ovulation_date.strftime('%B %d, %Y')}\n"
             response_text += f"Fertile Window: {fertile_start.strftime('%B %d')} - {fertile_end.strftime('%B %d')}\n\n"
-            response_text += "Would you like me to set up SMS reminders for these dates?"
+            
+            if phone_number:
+                response_text += "✅ SMS reminders have been set up for your cycle!"
+                # Set up SMS reminders using your existing SMS API
+                self._setup_period_reminders(last_period_date, cycle_length, phone_number)
+            else:
+                response_text += "📱 Provide a phone number to receive SMS reminders for your cycle."
             
             dispatcher.utter_message(text=response_text)
             
-            # Set up SMS reminders using your existing SMS API
-            self._setup_period_reminders(last_period_date, cycle_length, tracker.sender_id)
-            
             return [
                 SlotSet("next_period_date", next_period.strftime("%Y-%m-%d")),
-                SlotSet("ovulation_date", ovulation_date.strftime("%Y-%m-%d"))
+                SlotSet("ovulation_date", ovulation_date.strftime("%Y-%m-%d")),
+                SlotSet("last_period_date", None),
+                SlotSet("cycle_length", None),
+                SlotSet("phone_number", None)
             ]
             
         except ValueError:
@@ -450,38 +442,56 @@ class ActionPeriodCalculator(Action):
             logger.error(f"Period calculation error: {e}")
             return []
     
-    def _setup_period_reminders(self, last_period_date: str, cycle_length: int, user_id: str):
+    def _setup_period_reminders(self, last_period_date: str, cycle_length: int, phone_number: str):
         """Set up SMS reminders using your existing SMS reminder API"""
         try:
             last_date = datetime.strptime(last_period_date, "%Y-%m-%d")
             next_period = last_date + timedelta(days=int(cycle_length))
+            ovulation_date = next_period - timedelta(days=14)
+            fertile_start = ovulation_date - timedelta(days=5)
             
-            # Set up reminders
+            # Set up multiple reminders using the correct API format
             reminders = [
                 {
-                    "type": "period_reminder",
-                    "user_id": user_id,
-                    "reminder_date": (next_period - timedelta(days=2)).isoformat(),
-                    "message": "Your period is expected in 2 days. 🩸",
-                    "category": "health"
+                    "to": phone_number,
+                    "message": "🌟 Fertile window starts soon! This is a good time to track your cycle for better planning.",
+                    "created_at": fertile_start.isoformat()
                 },
                 {
-                    "type": "period_reminder", 
-                    "user_id": user_id,
-                    "reminder_date": next_period.isoformat(),
-                    "message": "Your period is expected today. 📅",
-                    "category": "health"
+                    "to": phone_number,
+                    "message": "🩸 Your period is expected in 2 days. Take care of yourself!",
+                    "created_at": (next_period - timedelta(days=2)).isoformat()
+                },
+                {
+                    "to": phone_number,
+                    "message": "📅 Your period is expected today. You've got this! 💪",
+                    "created_at": next_period.isoformat()
+                },
+                {
+                    "to": phone_number,
+                    "message": "💚 Consider logging your symptoms today for better cycle insights.",
+                    "created_at": (next_period + timedelta(days=1)).isoformat()
                 }
             ]
             
+            successful_reminders = 0
             for reminder in reminders:
-                requests.post(
-                    f"{WEBHOOK_CONFIG['sms_reminder_base_url']}/schedule-reminder",
-                    json=reminder,
-                    timeout=5
-                )
+                try:
+                    response = requests.post(
+                        f"{WEBHOOK_CONFIG['sms_reminder_base_url']}/api/reminders",
+                        json=reminder,
+                        timeout=5
+                    )
+                    if response.status_code == 200:
+                        successful_reminders += 1
+                        result = response.json()
+                        logger.info(f"Period reminder scheduled, reminder_id: {result.get('reminder_id')}")
+                    else:
+                        logger.warning(f"Period reminder failed with status {response.status_code}")
+                except Exception as e:
+                    logger.error(f"Individual reminder failed: {e}")
             
-            logger.info(f"Period reminders set up for user {user_id}")
+            logger.info(f"Successfully scheduled {successful_reminders}/{len(reminders)} period reminders for {phone_number}")
             
         except Exception as e:
             logger.error(f"Failed to set up period reminders: {e}")
@@ -565,38 +575,6 @@ class ValidatePeriodCalculatorForm(FormValidationAction):
             dispatcher.utter_message(text="Please provide a valid number of days (e.g., 28).")
             return {"cycle_length": None}
 
-# Contextual memory and follow-up handler
-class ActionContextualFollowUp(Action):
-    def name(self) -> Text:
-        return "action_contextual_followup"
-    
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        # Get conversation context
-        last_action = None
-        recent_actions = []
-        
-        for event in reversed(tracker.events):
-            if event.get('event') == 'action':
-                if not last_action:
-                    last_action = event.get('name')
-                recent_actions.append(event.get('name'))
-                if len(recent_actions) >= 3:
-                    break
-        
-        # Provide contextual follow-up based on last action
-        if last_action == "action_track_order":
-            dispatcher.utter_message(text="Would you like to track another order or is there anything else I can help you with?")
-                
-        elif last_action == "action_submit_refund":
-            dispatcher.utter_message(text="Your refund request has been received. You'll be notified by email within 2-3 business days. Is there anything else I can help you with?")
-                
-        elif last_action == "action_submit_complaint":
-            dispatcher.utter_message(text="Your complaint has been recorded. We'll get back to you within 24 hours. Do you need support with anything else?")
-                
-        elif last_action == "action_period_calculator":
-            dispatcher.utter_message(text="Your period cycle has been calculated and SMS reminders have been set up. Would you like to make another calculation?")
-        
-        return []
 
 # Enhanced greeting with context awareness
 class ActionSmartGreeting(Action):
