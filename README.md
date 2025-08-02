@@ -1,25 +1,45 @@
-# RasaSupportBot (V1 - Broken Demo)
+# RasaSupportBot V2 (Improved Version)
 
-This is a deliberately broken demo chatbot for portfolio purposes. It simulates a real-world support bot with known performance and quality issues, which will be fixed in V2.
+An intelligent conversational AI support bot built with Rasa. This improved version fixes all issues from V1 and adds advanced features for real-world customer support scenarios.
 
-## Features (V1)
-- Handles only 3 intents: greet, ask_hours, ask_refund
-- Weak NLU: Only 2–3 ambiguous examples per intent
-- No fallback response: fails silently on unknown input
-- Simulates slow responses (2s delay)
-- No conversation logging or tracking
-- No context memory (no slots or forms)
-- Very generic, low-quality answers
+## Current Features (V2)
 
-## Known Issues (to fix in V2)
-- Poor intent recognition due to tiny, ambiguous training set
-- No fallback or error handling for unknown input
-- Slow response time (intentional delay)
-- No logs or analytics
-- Cannot remember user context or previous turns
-- Answers are not helpful or detailed
-- Minimal code and configuration
+### **Core Capabilities**
+- **Smart Greetings**: Context-aware welcome messages with action buttons
+- **Refund Processing**: Complete form-based refund requests with validation
+- **Complaint Management**: Structured complaint submission with issue categorization
+- **Order Tracking**: Real-time tracking through Turkish carriers (PTT, ARAS, SURAT)
+- **Period Calculator**: Menstrual cycle tracking with SMS reminder scheduling
+
+### **Technical Features**
+- **Form Validation**: Email, phone number, and order number validation
+- **Webhook Integration**: n8n workflow automation for data processing
+- **SMS Notifications**: Automated SMS reminders via external API
+- **Context Memory**: Advanced slot management and conversation state
+- **Fallback Handling**: Intelligent responses for unknown inputs
+- **Multi-Channel Support**: REST API, SocketIO, and web interface
+
+### **Reliability**
+- Comprehensive error handling and logging
+- Input sanitization and validation
+- Timeout protection for external API calls
+- Smart retry mechanisms
+
+## **Getting Started**
+
+1. **Install Dependencies**: `pip install -r requirements.txt`
+2. **Configure Environment**: Copy `.env.example` to `.env` and update values
+3. **Start Action Server**: `rasa run actions --port 5055`
+4. **Start Rasa Server**: `rasa run --enable-api --cors "*"`
+5. **Open Web Interface**: Visit `index.html` to interact with the bot
+
+## **Available Commands**
+- `/greet` - Start conversation
+- `/ask_refund` - Request product refund
+- `/complaint` - File a complaint
+- `/ask_order_status` - Track your order
+- `/ask_period_calculator` - Calculate menstrual cycle
 
 ---
 
-**This version is intentionally under-optimized and broken.** 
+**This is the fully functional V2 version with production-ready features.** 

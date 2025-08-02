@@ -125,18 +125,15 @@ nlu:
     - has my order [98765](order_number) been delivered?
     - can you track my order?
     - I want to check my order
-    - check my delivery
     - is my order on the way?
     - has my order arrived?
     - where's my package?
     - can you tell me if my order is out for delivery?
     - I want to know the status of my order
     - can you update me on my order?
-    - I want to track my delivery
     - is my package coming today?
     - can you tell me about my shipment?
     - I want to check orders
-    - I want to check my delivery
     - can you check the status of order [22222](order_number)?
     - please check order [33333](order_number)
 
@@ -174,6 +171,10 @@ nlu:
     - [delivery](issue_type) was late
     - [payment](issue_type) issue
     - [product](issue_type) is defective
+    - [service](issue_type) was poor
+    - [shipping](issue_type) problem
+    - [billing](issue_type) error
+    - [website](issue_type) issue
     - I want to file a complaint
     - I am dissatisfied with my order
     - my order arrived damaged

@@ -53,6 +53,10 @@ slots:
     mappings:
       - type: from_entity
         entity: issue_type
+      - type: from_text
+        conditions:
+        - active_loop: complaint_form
+          requested_slot: issue_type
   email:
     type: text
     influence_conversation: true
