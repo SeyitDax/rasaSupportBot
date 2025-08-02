@@ -127,3 +127,5 @@ tests/
 
 .rasa/cache/
 credentials.yml
+
+References/*

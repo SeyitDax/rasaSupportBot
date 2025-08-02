@@ -1,6 +1,19 @@
 version: "3.1"
 
 nlu:
+
+- regex: order_number
+  examples: |
+    - \b[0-9]{5,10}\b
+
+- regex: last_period_date
+  examples: |
+    - \b\d{4}-\d{2}-\d{2}\b
+
+- regex: phone_number
+  examples: |
+    - \+[1-9]\d{9,14}\b
+
 - intent: greet
   examples: |
     - hi
@@ -326,18 +339,3 @@ nlu:
     - I usually have a cycle of [28 days](cycle_length)
     - it's around [30 days](cycle_length) for me
     - it's mostly [27 days](cycle_length)
-
-
-
-
-regex:
-  - name: email
-    pattern: '\b[\w.%+-]+@(?:[\w-]+\.)+[a-zA-Z]{2,}\b'
-  - name: order_number
-    pattern: '(?<!\+)\b[0-9]{5,10}\b(?![0-9])'
-  - name: last_period_date
-    pattern: '\d{4}-\d{2}-\d{2}'
-  - name: cycle_length
-    pattern: '[0-9]{1,2}'
-  - name: phone_number
-    pattern: '\+[0-9]{10,15}'

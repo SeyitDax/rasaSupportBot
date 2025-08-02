@@ -28,10 +28,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 WEBHOOK_CONFIG = {
-    'complaint_webhook': os.getenv('WEBHOOK_URL', 'https://seyitdax.app.n8n.cloud/webhook-test/87d3f403-3cc7-42cd-8906-9f13d0bc4333'),
-    'refund_webhook': os.getenv('WEBHOOK_URL', 'https://seyitdax.app.n8n.cloud/webhook-test/87d3f403-3cc7-42cd-8906-9f13d0bc4333'),
-    'order_webhook': os.getenv('WEBHOOK_URL', 'https://seyitdax.app.n8n.cloud/webhook-test/87d3f403-3cc7-42cd-8906-9f13d0bc4333'),
-    'sms_reminder_base_url': os.getenv('SMS_REMINDER_BASE_URL', 'https://web-production-b03f5.up.railway.app')  # Your SMS Reminder API
+    'complaint_webhook': os.getenv('WEBHOOK_URL'),
+    'refund_webhook': os.getenv('WEBHOOK_URL'),
+    'order_webhook': os.getenv('WEBHOOK_URL'),
+    'sms_reminder_base_url': os.getenv('SMS_REMINDER_BASE_URL')  # Your SMS Reminder API
 }
 
 # SMS message templates
